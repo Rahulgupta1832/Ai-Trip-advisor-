@@ -1,9 +1,8 @@
 streamlit
-pandas
-numpy
-requests
-# optional: try install crewai — keep it, but it's okay if it fails (we'll add stubs)
 crewai
 crewai_tools
 openai
 groq
+pandas
+numpy
+requests
