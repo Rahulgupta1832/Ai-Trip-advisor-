@@ -1,4 +1,5 @@
-# crewai/__init__.py — minimal stubs to allow deployment (real CrewAI not required)
+# crewai/__init__.py — combined minimal stubs for deployment
+# These are placeholders so the app can import and run. Replace with real CrewAI package for full functionality.
 
 class Agent:
     def __init__(self, *args, **kwargs):
@@ -19,13 +20,32 @@ class LLM:
         self.kwargs = kwargs
 
     def generate(self, prompt, max_tokens=100, **kwargs):
-        # Return a simple stubbed response that mimics an LLM output
         return {"text": "LLM stub response. Install real CrewAI or OpenAI for full functionality."}
 
-    # Some code may call __call__ instead of generate
     def __call__(self, prompt, **kwargs):
         return self.generate(prompt, **kwargs)
 
 
-# Export expected names
-__all__ = ["Agent", "LLM"]
+class Task:
+    """
+    Minimal Task stub to satisfy 'from crewai import Task'.
+    Implement methods your app expects. This basic stub stores task args
+    and provides a run/execute method returning a safe placeholder.
+    """
+    def __init__(self, *args, **kwargs):
+        self.args = args
+        self.kwargs = kwargs
+
+    def run(self, *args, **kwargs):
+        return {"status": "stub", "result": "Task executed in stub mode."}
+
+    # Some code may call execute or __call__
+    def execute(self, *args, **kwargs):
+        return self.run(*args, **kwargs)
+
+    def __call__(self, *args, **kwargs):
+        return self.run(*args, **kwargs)
+
+
+# Export names expected by the app
+__all__ = ["Agent", "LLM", "Task"]
