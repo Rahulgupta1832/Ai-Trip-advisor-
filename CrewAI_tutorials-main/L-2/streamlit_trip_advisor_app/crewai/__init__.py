@@ -1,5 +1,6 @@
-# crewai/__init__.py — combined minimal stubs for deployment
-# These are placeholders so the app can import and run. Replace with real CrewAI package for full functionality.
+# crewai/__init__.py — expanded minimal stubs for deployment
+# These are safe placeholders so the app can import and run.
+# They return simple stub responses; replace with the real CrewAI package later.
 
 class Agent:
     def __init__(self, *args, **kwargs):
@@ -11,10 +12,6 @@ class Agent:
 
 
 class LLM:
-    """
-    Minimal LLM stub. Provide the methods your code might call.
-    Adjust returns if your code expects other shapes.
-    """
     def __init__(self, *args, **kwargs):
         self.args = args
         self.kwargs = kwargs
@@ -27,11 +24,6 @@ class LLM:
 
 
 class Task:
-    """
-    Minimal Task stub to satisfy 'from crewai import Task'.
-    Implement methods your app expects. This basic stub stores task args
-    and provides a run/execute method returning a safe placeholder.
-    """
     def __init__(self, *args, **kwargs):
         self.args = args
         self.kwargs = kwargs
@@ -39,7 +31,6 @@ class Task:
     def run(self, *args, **kwargs):
         return {"status": "stub", "result": "Task executed in stub mode."}
 
-    # Some code may call execute or __call__
     def execute(self, *args, **kwargs):
         return self.run(*args, **kwargs)
 
@@ -47,5 +38,54 @@ class Task:
         return self.run(*args, **kwargs)
 
 
-# Export names expected by the app
-__all__ = ["Agent", "LLM", "Task"]
+class Crew:
+    """
+    Minimal Crew stub: a collection/manager of Task/Agent objects.
+    Provide only simple behavior so imports and basic usage work.
+    """
+    def __init__(self, members=None, *args, **kwargs):
+        self.members = members or []
+        self.args = args
+        self.kwargs = kwargs
+
+    def add(self, member):
+        self.members.append(member)
+
+    def run_all(self, *args, **kwargs):
+        results = []
+        for m in self.members:
+            try:
+                res = m.run(*args, **kwargs)
+            except Exception:
+                try:
+                    res = m(*args, **kwargs)
+                except Exception:
+                    res = {"status": "stub", "result": None}
+            results.append(res)
+        return results
+
+
+class Process:
+    """
+    Minimal Process stub: represents a runnable process/workflow.
+    """
+    def __init__(self, name="process", *args, **kwargs):
+        self.name = name
+        self.args = args
+        self.kwargs = kwargs
+        self.running = False
+
+    def start(self, *args, **kwargs):
+        self.running = True
+        return {"status": "started", "name": self.name}
+
+    def stop(self, *args, **kwargs):
+        self.running = False
+        return {"status": "stopped", "name": self.name}
+
+    def run(self, *args, **kwargs):
+        return {"status": "stub", "name": self.name, "output": "Process run in stub mode."}
+
+
+# Export expected names
+__all__ = ["Agent", "LLM", "Task", "Crew", "Process"]
