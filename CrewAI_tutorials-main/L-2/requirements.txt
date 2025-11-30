@@ -3,5 +3,5 @@ pandas
 numpy
 requests
 langchain
-langchain-community
+langchain-community==0.0.30  # Try this, or a more recent specific version
 duckduckgo-search
