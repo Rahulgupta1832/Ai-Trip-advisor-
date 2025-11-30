@@ -1,8 +1,7 @@
 streamlit
-crewai
-crewai_tools
-openai
-groq
 pandas
 numpy
 requests
+langchain
+langchain-community
+duckduckgo-search
