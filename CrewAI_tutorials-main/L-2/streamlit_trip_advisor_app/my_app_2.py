@@ -1,30 +1,60 @@
+from TravelAgents import guide_expert, location_expert, planner_expert
+from TravelTasks import location_task, guide_task, planner_task
+from crewai import Crew, Process
 import streamlit as st
-import google.generativeai as genai
 
-st.title("AI Trip Advisor ✈️🌍")
+# Streamlit App Title
+st.title("🌍 AI-Powered Trip Planner")
 
-location = st.text_input("Where do you want to go?")
-days = st.number_input("How many days?", 1, 30, 3)
-budget = st.text_input("Budget (optional)")
+st.markdown("""
+💡 *Plan your next trip with AI!*  
+Enter your travel details below, and our AI-powered travel assistant will create a personalized itinerary including:
+ Best places to visit 🎡   Accommodation & budget planning 💰
+ Local food recommendations 🍕   Transportation & visa details 🚆
+""")
 
-if st.button("Generate Plan"):
-    if not location:
-        st.error("Please enter a destination.")
+# User Inputs
+from_city = st.text_input("🏡 From City", "India")
+destination_city = st.text_input("✈️ Destination City", "Rome")
+date_from = st.date_input("📅 Departure Date")
+date_to = st.date_input("📅 Return Date")
+interests = st.text_area("🎯 Your Interests (e.g., sightseeing, food, adventure)", "sightseeing and good food")
+
+# Button to run CrewAI
+if st.button("🚀 Generate Travel Plan"):
+    if not from_city or not destination_city or not date_from or not date_to or not interests:
+        st.error("⚠️ Please fill in all fields before generating your travel plan.")
     else:
-        genai.configure(api_key=st.secrets["GEMINI_API_KEY"])
+        st.write("⏳ AI is preparing your personalized travel itinerary... Please wait.")
 
-        prompt = f"""
-        Create a {days}-day travel plan for {location}.
-        Include:
-        - places to visit
-        - hotel suggestions
-        - food recommendations
-        - travel tips
-        - consider budget: {budget}
-        """
+        # Initialize Tasks
+        loc_task = location_task(location_expert, from_city, destination_city, date_from, date_to)
+        guid_task = guide_task(guide_expert, destination_city, interests, date_from, date_to)
+        plan_task = planner_task([loc_task, guid_task], planner_expert, destination_city, interests, date_from, date_to)
 
-        model = genai.GenerativeModel("gemini-pro")
-        response = model.generate_content(prompt)
+        # Define Crew
+        crew = Crew(
+            agents=[location_expert, guide_expert, planner_expert],
+            tasks=[loc_task, guid_task, plan_task],
+            process=Process.sequential,
+            full_output=True,
+            verbose=True,
+        )
 
-        st.subheader("Your Travel Plan")
-        st.markdown(response.text)
+        # Run Crew AI
+        result = crew.kickoff()
+
+        # Display Results
+        st.subheader("✅ Your AI-Powered Travel Plan")
+        st.markdown(result)
+
+
+        # Ensure result is a string
+        travel_plan_text = str(result)  # ✅ Convert CrewOutput to string
+
+        st.download_button(
+            label="📥 Download Travel Plan",
+            data=travel_plan_text,  # ✅ Now passing a valid string
+            file_name=f"Travel_Plan_{destination_city}.txt",
+            mime="text/plain"
+        )
