@@ -1,2 +1,7 @@
-google-generativeai
 streamlit
+pandas
+numpy
+requests
+langchain
+langchain-community
+duckduckgo-search
